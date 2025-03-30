@@ -37,7 +37,7 @@ class ChessPiece{
     public String positionTagTransformation(String entry, int moveX , int moveY){
         int xPosition = (int)entry.charAt(0) + moveX;
         int yPosition = (int)entry.charAt(1) + moveY;
-        String transformedPosition = (char)(xPosition+'0') + (char)(yPosition+'0');
+        String transformedPosition = (char)(xPosition+'0') +"free";
         return transformedPosition;
     }
     
