@@ -3,12 +3,31 @@
 
 
 
+
+
 public class JavaChess {
 
     public static void main(String[] args){
-        System.out.println("Wassup");
-    }
+        ChessPiece [][] chessBoard = new ChessPiece[8][8];
+        for(int i=0;i<8;i++){
+            chessBoard[1][i] = new Pawn(1, "1" + i);
+        }
+        for(int i=0;i<8;i++){
+            chessBoard[6][i] = new Pawn(-1, "6" + i);
+        }
 
+        if(chessBoard[1][0] instanceof Pawn){
+            ((Pawn) chessBoard[1][0]).initiateMove("20", chessBoard);
+            System.out.println("genesis");
+        }
+        System.out.println(chessBoard[2][0].returnColor());
+        
+        
+    
+        
+        
+    }
+    
 
     
 
@@ -16,53 +35,74 @@ public class JavaChess {
 
 class ChessPiece{
     protected String pieceClass;
-    protected String color;
+    protected int color;
     protected String currentPosition;
 
-
-    public boolean freeToMove(String nextPosition, ChessPiece[][] board){
+    //Checks if the square is empty
+    public boolean freeToMove(String nextPosition, ChessPiece [][] board){
+        int xPosition = nextPosition.charAt(0) - '0';
+        int yPosition = nextPosition.charAt(1) - '0';
         boolean canMove = true;
-        int xPosition = (int) nextPosition.charAt(0);
-        int yPosition = (int) nextPosition.charAt(1);
+        if(xPosition<0 || yPosition<0 || xPosition>=8 || yPosition>=8){
+            return false;
+        }
+        
         if (board[xPosition][yPosition]!=null){
-           canMove = !(board[xPosition][yPosition].returnColor().equals(this.color));
+           canMove = !(board[xPosition][yPosition].returnColor()==(this.color));
         }   
      return canMove;
     }
 
-    public String returnColor(){
+    public int returnColor(){
         return color;
     }
 
-    public String positionTagTransformation(String entry, int moveX , int moveY){
-        int xPosition = (int)entry.charAt(0) + moveX;
-        int yPosition = (int)entry.charAt(1) + moveY;
-        String transformedPosition = (char)(xPosition+'0') +"free";
-        return transformedPosition;
+    //Checks if the chosen move is possible by the piece
+    public String possiblePosition(String entry, int moveX , int moveY){
+        int xPosition = (int)entry.charAt(0) - '0' + moveX;
+        int yPosition = (int)entry.charAt(1) - '0'+ moveY;
+        return "" + xPosition + yPosition;
     }
-    
+
+    //Moves the piece
+    public void movePiece(String nextPosition , ChessPiece [][] board){
+
+        int currentX = currentPosition.charAt(0) - '0';
+        int currentY = currentPosition.charAt(1) - '0';
+        int nextX = nextPosition.charAt(0) - '0';
+        int nextY = nextPosition.charAt(1) - '0';
+        
+        board [currentX][currentY]=null;
+        board [nextX][nextY]=this;
+        currentPosition = nextPosition;
+        
+    }
+
+
+
     
 
 }
 
 class Pawn extends ChessPiece{
-    
-    Pawn(String color,String currentPosition){
+    //Constructor of pawn, sets color and the starting position
+    Pawn(int color,String currentPosition){
         this.color = color;
         this.currentPosition = currentPosition;
-        pieceClass = "Pawn";
+        this.pieceClass = "Pawn";
     }
 
-    public void initiateMove(String nextPosition, ChessPiece[][] board ){
-        if(freeToMove(nextPosition, board) && (nextPosition.equals(currentPosition.charAt(0))){
-            movePawn(nextPosition);
+    //Checks if the square is free and if the position can be possible
+    
+    public void initiateMove(String nextPosition, ChessPiece [][] board ){
+        if(freeToMove(nextPosition, board)){
+            if(possiblePosition(currentPosition,1*color,0).equals(nextPosition)){
+                movePiece(nextPosition, board);
+            }
+            
 
         }
     }
-
-    public void movePawn(String nextPosition){
-        currentPosition = nextPosition;
-        
-    }
+    
 }
 
