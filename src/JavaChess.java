@@ -3,8 +3,6 @@
 
 
 
-
-
 public class JavaChess {
 
     public static void main(String[] args){
@@ -16,11 +14,16 @@ public class JavaChess {
             chessBoard[6][i] = new Pawn(-1, "6" + i);
         }
 
-        if(chessBoard[1][0] instanceof Pawn){
+        if(chessBoard[1][0].getPieceClass()=='P'){
             ((Pawn) chessBoard[1][0]).initiateMove("20", chessBoard);
             System.out.println("genesis");
         }
         System.out.println(chessBoard[2][0].returnColor());
+        System.out.println(chessBoard[1][1].sameClass(chessBoard[2][0]));
+        chessBoard[0][1] = new Rook(1, "01");
+        ((Rook)(chessBoard[0][1])).initiateMove("03",chessBoard);
+        System.out.println(chessBoard[0][3].getPieceClass());
+    
         
         
     
@@ -52,7 +55,7 @@ class ChessPiece{
         }   
      return canMove;
     }
-
+    //Returns the color of the piece
     public int returnColor(){
         return color;
     }
@@ -64,7 +67,7 @@ class ChessPiece{
         return "" + xPosition + yPosition;
     }
 
-    //Moves the piece
+    //Finalizes the move of the piece by changing the actual position in the array
     public void movePiece(String nextPosition , ChessPiece [][] board){
 
         int currentX = currentPosition.charAt(0) - '0';
@@ -78,6 +81,20 @@ class ChessPiece{
         
     }
 
+    //Returns class
+    public char getPieceClass(){
+        return pieceClass.charAt(0);
+    }
+    //Checks if two pieces are of the same class
+    public boolean sameClass(ChessPiece piece){
+
+        return (piece.getPieceClass()==getPieceClass());
+        
+    }
+
+    //Verify the pieces class
+
+    
 
 
     
@@ -97,6 +114,34 @@ class Pawn extends ChessPiece{
     public void initiateMove(String nextPosition, ChessPiece [][] board ){
         if(freeToMove(nextPosition, board)){
             if(possiblePosition(currentPosition,1*color,0).equals(nextPosition)){
+                movePiece(nextPosition, board);
+            }
+            
+
+        }
+    }
+    
+}
+
+class Rook extends ChessPiece{
+    //Constructor of pawn, sets color and the starting position
+    Rook(int color,String currentPosition){
+        this.color = color;
+        this.currentPosition = currentPosition;
+        this.pieceClass = "Rook";
+    }
+
+    //Checks if the square is free and if the position can be possible
+    
+    public void initiateMove(String nextPosition, ChessPiece [][] board ){
+        
+        int xCurrent = (int)currentPosition.charAt(0) - '0';
+        int yCurrent = (int)currentPosition.charAt(1) - '0';
+        int xPosition = (int)nextPosition.charAt(0) - '0';
+        int yPosition = (int)nextPosition.charAt(1) - '0';
+        boolean positioning = (possiblePosition(currentPosition,Math.abs(xCurrent-xPosition),0).equals(nextPosition))||(possiblePosition(currentPosition,0,Math.abs(yCurrent-yPosition)).equals(nextPosition));
+        if(freeToMove(nextPosition, board)){
+            if(positioning){
                 movePiece(nextPosition, board);
             }
             
