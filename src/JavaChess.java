@@ -20,9 +20,13 @@ public class JavaChess {
         }
         System.out.println(chessBoard[2][0].returnColor());
         System.out.println(chessBoard[1][1].sameClass(chessBoard[2][0]));
-        chessBoard[0][1] = new Rook(1, "01");
-        ((Rook)(chessBoard[0][1])).initiateMove("03",chessBoard);
-        System.out.println(chessBoard[0][3].getPieceClass());
+        chessBoard[0][0] = new Rook(1, "00");
+        ((Rook)(chessBoard[0][0])).initiateMove("60",chessBoard);
+        chessBoard[0][1] = new Horse(1, "01");
+        ((Horse)(chessBoard[0][1])).initiateMove("22",chessBoard);
+        
+        
+        
     
         
         
@@ -61,9 +65,9 @@ class ChessPiece{
     }
 
     //Checks if the chosen move is possible by the piece
-    public String possiblePosition(String entry, int moveX , int moveY){
-        int xPosition = (int)entry.charAt(0) - '0' + moveX;
-        int yPosition = (int)entry.charAt(1) - '0'+ moveY;
+    public String possiblePosition(int moveX , int moveY){
+        int xPosition = (int)currentPosition.charAt(0) - '0' + moveX;
+        int yPosition = (int)currentPosition.charAt(1) - '0'+ moveY;
         return "" + xPosition + yPosition;
     }
 
@@ -113,7 +117,7 @@ class Pawn extends ChessPiece{
     
     public void initiateMove(String nextPosition, ChessPiece [][] board ){
         if(freeToMove(nextPosition, board)){
-            if(possiblePosition(currentPosition,1*color,0).equals(nextPosition)){
+            if(possiblePosition(1*color,0).equals(nextPosition)){
                 movePiece(nextPosition, board);
             }
             
@@ -139,7 +143,37 @@ class Rook extends ChessPiece{
         int yCurrent = (int)currentPosition.charAt(1) - '0';
         int xPosition = (int)nextPosition.charAt(0) - '0';
         int yPosition = (int)nextPosition.charAt(1) - '0';
-        boolean positioning = (possiblePosition(currentPosition,Math.abs(xCurrent-xPosition),0).equals(nextPosition))||(possiblePosition(currentPosition,0,Math.abs(yCurrent-yPosition)).equals(nextPosition));
+        boolean positioning = (possiblePosition(Math.abs(xCurrent-xPosition),0).equals(nextPosition))||(possiblePosition(0,Math.abs(yCurrent-yPosition)).equals(nextPosition));
+        if(freeToMove(nextPosition, board)){
+            if(positioning){
+                movePiece(nextPosition, board);
+            }
+            
+
+        }
+    }
+    
+}
+
+class Horse extends ChessPiece{
+    //Constructor of pawn, sets color and the starting position
+    Horse(int color,String currentPosition){
+        this.color = color;
+        this.currentPosition = currentPosition;
+        this.pieceClass = "Horse";
+    }
+
+    //Checks if the square is free and if the position can be possible
+    
+    public void initiateMove(String nextPosition, ChessPiece [][] board ){
+        
+        boolean PossiblePositionUp = possiblePosition(1,2).equals(nextPosition) || possiblePosition(-1,2).equals(nextPosition);
+        boolean PossiblePositionDown = possiblePosition(1,-2).equals(nextPosition) || possiblePosition(-1,-2).equals(nextPosition);
+        boolean PossiblePositionRight = possiblePosition(2,1).equals(nextPosition) || possiblePosition(2,-1).equals(nextPosition);
+        boolean PossiblePositionLeft = possiblePosition(-2,1).equals(nextPosition) || possiblePosition(-2,-1).equals(nextPosition);
+
+
+        boolean positioning = PossiblePositionDown || PossiblePositionUp || PossiblePositionRight || PossiblePositionLeft;
         if(freeToMove(nextPosition, board)){
             if(positioning){
                 movePiece(nextPosition, board);
