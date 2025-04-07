@@ -24,6 +24,10 @@ public class JavaChess {
         ((Rook)(chessBoard[0][0])).initiateMove("60",chessBoard);
         chessBoard[0][1] = new Horse(1, "01");
         ((Horse)(chessBoard[0][1])).initiateMove("22",chessBoard);
+        chessBoard[0][2] = new Bishop(1, "02");
+        ((Bishop)(chessBoard[0][2])).initiateMove("23",chessBoard);
+        System.out.println(chessBoard[0][2].toString());
+        
         
         
         
@@ -89,6 +93,7 @@ class ChessPiece{
     public char getPieceClass(){
         return pieceClass.charAt(0);
     }
+
     //Checks if two pieces are of the same class
     public boolean sameClass(ChessPiece piece){
 
@@ -96,7 +101,10 @@ class ChessPiece{
         
     }
 
-    //Verify the pieces class
+    @Override
+    public String toString(){
+        return (color==-1)?"White " + pieceClass + " at " + currentPosition:"Black " + pieceClass + " at " + currentPosition;
+    }
 
     
 
@@ -128,7 +136,7 @@ class Pawn extends ChessPiece{
 }
 
 class Rook extends ChessPiece{
-    //Constructor of pawn, sets color and the starting position
+    //Constructor of rook, sets color and the starting position
     Rook(int color,String currentPosition){
         this.color = color;
         this.currentPosition = currentPosition;
@@ -156,7 +164,7 @@ class Rook extends ChessPiece{
 }
 
 class Horse extends ChessPiece{
-    //Constructor of pawn, sets color and the starting position
+    //Constructor of horse, sets color and the starting position
     Horse(int color,String currentPosition){
         this.color = color;
         this.currentPosition = currentPosition;
@@ -176,6 +184,36 @@ class Horse extends ChessPiece{
         boolean positioning = PossiblePositionDown || PossiblePositionUp || PossiblePositionRight || PossiblePositionLeft;
         if(freeToMove(nextPosition, board)){
             if(positioning){
+                movePiece(nextPosition, board);
+            }
+            
+
+        }
+    }
+    
+}
+
+class Bishop extends ChessPiece{
+    //Constructor of bishop, sets color and the starting position
+    Bishop(int color,String currentPosition){
+        this.color = color;
+        this.currentPosition = currentPosition;
+        this.pieceClass = "Bishop";
+    }
+    
+
+    //Checks if the square is free and if the position can be possible
+    
+    
+    public void initiateMove(String nextPosition, ChessPiece [][] board ){
+        int nextX = (int)nextPosition.charAt(0) - '0';
+        int nextY = (int)nextPosition.charAt(1) - '0';
+        boolean possibleMove = (Math.abs(nextX)-((int)currentPosition.charAt(0) - '0') == Math.abs(nextY)-((int)currentPosition.charAt(1) - '0'));
+
+
+
+        if(freeToMove(nextPosition, board)){
+            if(possibleMove){
                 movePiece(nextPosition, board);
             }
             
