@@ -27,6 +27,30 @@ public class JavaChess {
         chessBoard[0][2] = new Bishop(1, "02");
         ((Bishop)(chessBoard[0][2])).initiateMove("23",chessBoard);
         System.out.println(chessBoard[0][2].toString());
+        chessBoard[3][3] = new Queen(-1,"33");
+        System.out.println(chessBoard[3][3].getPieceClass());
+        ((Queen)(chessBoard[3][3])).initiateMove("52",chessBoard);
+        
+        System.err.println(chessBoard[3][3].toString());
+        //String array representation of the board
+        char [][] boardRepresent = new char[8][8];
+        for(int i=0;i<8;i++){
+            for(int j=0;j<8;j++){
+                if(chessBoard[i][j]!=null){
+                    boardRepresent[i][j] = (chessBoard[i][j].toString()).charAt(6);
+                    System.out.print(boardRepresent[i][j] + " ");
+
+                }else{
+                    boardRepresent[i][j] ='0';
+                    System.out.print(boardRepresent[i][j]+ " ");
+
+                }
+                
+            }
+            System.err.println("");
+        }
+
+
         
         
         
@@ -214,6 +238,37 @@ class Bishop extends ChessPiece{
 
         if(freeToMove(nextPosition, board)){
             if(possibleMove){
+                movePiece(nextPosition, board);
+            }
+            
+
+        }
+    }
+    
+}
+
+class Queen extends ChessPiece{
+    //Constructor of pawn, sets color and the starting position
+    Queen(int color,String currentPosition){
+        this.color = color;
+        this.currentPosition = currentPosition;
+        this.pieceClass = "Queen";
+    }
+
+    //Checks if the square is free and if the position can be possible
+    
+    public void initiateMove(String nextPosition, ChessPiece [][] board ){
+
+        int nextX = (int)nextPosition.charAt(0) - '0';
+        int nextY = (int)nextPosition.charAt(1) - '0';
+        //Same boolean as the bishop
+        boolean possibleMove = (Math.abs(nextX)-((int)currentPosition.charAt(0) - '0') == Math.abs(nextY)-((int)currentPosition.charAt(1) - '0'));
+        int xCurrent = (int)currentPosition.charAt(0) - '0';
+        int yCurrent = (int)currentPosition.charAt(1) - '0';
+        //Same boolean as the rook
+        boolean positioning = (possiblePosition(Math.abs(xCurrent-nextX),0).equals(nextPosition))||(possiblePosition(0,Math.abs(yCurrent-nextY)).equals(nextPosition));
+        if(freeToMove(nextPosition, board)){
+            if(possibleMove || positioning){
                 movePiece(nextPosition, board);
             }
             
