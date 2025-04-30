@@ -1,54 +1,105 @@
-
-
+import java.util.Scanner;
 
 
 
 public class JavaChess {
-
-    public static void main(String[] args){
-        ChessPiece [][] chessBoard = new ChessPiece[8][8];
-        for(int i=0;i<8;i++){
-            chessBoard[1][i] = new Pawn(1, "1" + i);
-        }
-        for(int i=0;i<8;i++){
-            chessBoard[6][i] = new Pawn(-1, "6" + i);
-        }
-
-        if(chessBoard[1][0].getPieceClass()=='P'){
-            ((Pawn) chessBoard[1][0]).initiateMove("20", chessBoard);
-            System.out.println("genesis");
-        }
-        System.out.println(chessBoard[2][0].returnColor());
-        System.out.println(chessBoard[1][1].sameClass(chessBoard[2][0]));
-        chessBoard[0][0] = new Rook(1, "00");
-        ((Rook)(chessBoard[0][0])).initiateMove("60",chessBoard);
-        chessBoard[0][1] = new Horse(1, "01");
-        ((Horse)(chessBoard[0][1])).initiateMove("22",chessBoard);
-        chessBoard[0][2] = new Bishop(1, "02");
-        ((Bishop)(chessBoard[0][2])).initiateMove("23",chessBoard);
-        System.out.println(chessBoard[0][2].toString());
-        chessBoard[3][3] = new Queen(-1,"33");
-        System.out.println(chessBoard[3][3].getPieceClass());
-        ((Queen)(chessBoard[3][3])).initiateMove("52",chessBoard);
-        
-        System.err.println(chessBoard[3][3].toString());
-        //String array representation of the board
-        char [][] boardRepresent = new char[8][8];
+    public static void printTable(ChessPiece [][] boardReference){
         for(int i=0;i<8;i++){
             for(int j=0;j<8;j++){
-                if(chessBoard[i][j]!=null){
-                    boardRepresent[i][j] = (chessBoard[i][j].toString()).charAt(6);
-                    System.out.print(boardRepresent[i][j] + " ");
+                if(boardReference[i][j]!=null){
+                    
+                    System.out.print(((boardReference[i][j].toString()).toLowerCase()).charAt(0)+ "" +(boardReference[i][j].toString()).charAt(6) + " ");
 
                 }else{
-                    boardRepresent[i][j] ='0';
-                    System.out.print(boardRepresent[i][j]+ " ");
+                    System.out.print('0'+ " ");
 
                 }
                 
             }
             System.err.println("");
         }
+
+        
+
+    }
+    
+
+    public static void main(String[] args){
+
+        //Board setup
+        ChessPiece [][] chessBoard = new ChessPiece[8][8];
+        //Rooks
+        for(int i=0;i<8;i=i+7){
+            chessBoard[0][i] = new Rook(1, "0" + i);
+            chessBoard[7][i] = new Rook(-1, "7" + i);
+        }
+        //Horses
+        for(int i=1;i<7;i=i+5){
+            chessBoard[0][i] = new Horse(1, "0" + i);
+            chessBoard[7][i] = new Horse(-1, "7" + i);
+        }
+        //Bishops
+        for(int i=2;i<7;i=i+3){
+            chessBoard[0][i] = new Bishop(1, "0" + i);
+            chessBoard[7][i] = new Bishop(-1, "7" + i);
+        }
+        //Queens
+        chessBoard[0][3] = new Queen(1, "03");
+        chessBoard[7][3] = new Queen(-1, "73");
+        //Pawns
+        for(int i=0;i<8;i++){
+            chessBoard[1][i] = new Pawn(1, "1" + i);
+            chessBoard[6][i] = new Pawn(-1, "6" + i);
+        }
+        
+
+        
+        
+        
+
+        //Actual game run
+        String notation = "";//Keep notes
+        boolean kingIsAlive = true;
+        Scanner input = new Scanner(System.in);
+        int playerColor = -1;
+        int pieceX;
+        int pieceY;
+        printTable(chessBoard);
+        System.out.println("First Move:");
+        String playerInput = input.nextLine();
+        //Checking if the entered string has the correct pattern
+        String pattern = "\\d{4}";
+        //Input should be of type CCNN where CC is the current position of the piece to be moved and NN the next position
+        while(!playerInput.equals("0") && kingIsAlive ){
+            if(playerInput.matches(pattern)){
+                pieceX = playerInput.charAt(0) - '0';
+                pieceY = playerInput.charAt(1) - '0';
+                if(chessBoard[pieceX][pieceY] == null){
+                    System.out.println("The space is empty! Please enter another move:");
+                }else if (chessBoard[pieceX][pieceY].color != playerColor) {
+                    System.out.println("Player can't move piece of opposite color! Please enter the move again:");
+                }else{
+                    notation += pieceX + "" + pieceY + chessBoard[pieceX][pieceY].getPieceClass() + playerInput.substring(2,4) + "\n";
+                    chessBoard[pieceX][pieceY].initiateMove(playerInput.substring(2,4),chessBoard);
+                    System.out.println("Next move:");
+                    playerColor = playerColor*(-1);
+                }
+
+            }else{
+                System.out.println("The input is not of the correct pattern. Please enter the move again:");
+                
+
+            }
+            printTable(chessBoard);
+            playerInput = input.nextLine();
+
+
+
+        }
+        System.out.println(notation);
+
+
+
 
 
         
@@ -107,10 +158,23 @@ class ChessPiece{
         int nextX = nextPosition.charAt(0) - '0';
         int nextY = nextPosition.charAt(1) - '0';
         
-        board [currentX][currentY]=null;
-        board [nextX][nextY]=this;
+        board [currentX][currentY] = null;
+        board [nextX][nextY] = this;
         currentPosition = nextPosition;
         
+    }
+
+    public void initiateMove(String nextPosition, ChessPiece [][] board){
+
+        /*int currentX = currentPosition.charAt(0) - '0';
+        int currentY = currentPosition.charAt(1) - '0';
+        int nextX = nextPosition.charAt(0) - '0';
+        int nextY = nextPosition.charAt(1) - '0';
+        
+        board [currentX][currentY] = null;
+        board [nextX][nextY] = this;
+        currentPosition = nextPosition;
+        */
     }
 
     //Returns class
@@ -146,7 +210,7 @@ class Pawn extends ChessPiece{
     }
 
     //Checks if the square is free and if the position can be possible
-    
+    @Override
     public void initiateMove(String nextPosition, ChessPiece [][] board ){
         if(freeToMove(nextPosition, board)){
             if(possiblePosition(1*color,0).equals(nextPosition)){
@@ -168,7 +232,7 @@ class Rook extends ChessPiece{
     }
 
     //Checks if the square is free and if the position can be possible
-    
+    @Override
     public void initiateMove(String nextPosition, ChessPiece [][] board ){
         
         int xCurrent = (int)currentPosition.charAt(0) - '0';
@@ -196,7 +260,7 @@ class Horse extends ChessPiece{
     }
 
     //Checks if the square is free and if the position can be possible
-    
+    @Override
     public void initiateMove(String nextPosition, ChessPiece [][] board ){
         
         boolean PossiblePositionUp = possiblePosition(1,2).equals(nextPosition) || possiblePosition(-1,2).equals(nextPosition);
@@ -228,7 +292,7 @@ class Bishop extends ChessPiece{
 
     //Checks if the square is free and if the position can be possible
     
-    
+    @Override
     public void initiateMove(String nextPosition, ChessPiece [][] board ){
         int nextX = (int)nextPosition.charAt(0) - '0';
         int nextY = (int)nextPosition.charAt(1) - '0';
@@ -256,7 +320,7 @@ class Queen extends ChessPiece{
     }
 
     //Checks if the square is free and if the position can be possible
-    
+    @Override
     public void initiateMove(String nextPosition, ChessPiece [][] board ){
 
         int nextX = (int)nextPosition.charAt(0) - '0';
