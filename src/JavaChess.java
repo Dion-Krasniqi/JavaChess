@@ -1,3 +1,4 @@
+import java.lang.*;
 import java.util.Scanner;
 
 
@@ -59,7 +60,6 @@ public class JavaChess {
 
         //Actual game run
         String notation = "";//Keep notes
-        boolean kingIsAlive = true;
         Scanner input = new Scanner(System.in);
         int playerColor = -1;
         int pieceX;
@@ -70,7 +70,7 @@ public class JavaChess {
         //Checking if the entered string has the correct pattern
         String pattern = "\\d{4}";
         //Input should be of type CCNN where CC is the current position of the piece to be moved and NN the next position
-        while(!playerInput.equals("0") && kingIsAlive ){
+        while(!playerInput.equals("0")){
             if(playerInput.matches(pattern)){
                 pieceX = playerInput.charAt(0) - '0';
                 pieceY = playerInput.charAt(1) - '0';
@@ -80,6 +80,11 @@ public class JavaChess {
                     System.out.println("Player can't move piece of opposite color! Please enter the move again:");
                 }else{
                     notation += pieceX + "" + pieceY + chessBoard[pieceX][pieceY].getPieceClass() + playerInput.substring(2,4) + "\n";
+                    if((chessBoard[pieceX][pieceY].pieceClass).equals("King")){
+                        String winningSentence = (playerColor==-1)?"White " + " has won!":"Black " + " has won!";
+                        System.out.println(winningSentence);
+                        break;
+                    }
                     chessBoard[pieceX][pieceY].initiateMove(playerInput.substring(2,4),chessBoard);
                     System.out.println("Next move:");
                     playerColor = playerColor*(-1);
@@ -97,6 +102,7 @@ public class JavaChess {
 
         }
         System.out.println(notation);
+        input.close();
 
 
 
@@ -239,7 +245,12 @@ class Rook extends ChessPiece{
         int yCurrent = (int)currentPosition.charAt(1) - '0';
         int xPosition = (int)nextPosition.charAt(0) - '0';
         int yPosition = (int)nextPosition.charAt(1) - '0';
-        boolean positioning = (possiblePosition(Math.abs(xCurrent-xPosition),0).equals(nextPosition))||(possiblePosition(0,Math.abs(yCurrent-yPosition)).equals(nextPosition));
+        boolean PossiblePositionUp =  possiblePosition(xCurrent-xPosition,0).equals(nextPosition);
+        boolean PossiblePositionDown =  possiblePosition(xPosition-xCurrent,0).equals(nextPosition);
+        boolean PossiblePositionLeft =  possiblePosition(0,yCurrent-yPosition).equals(nextPosition);
+        boolean PossiblePositionRight =  possiblePosition(0,yPosition-yCurrent).equals(nextPosition);
+
+        boolean positioning = (PossiblePositionUp||PossiblePositionDown||PossiblePositionLeft||PossiblePositionRight);
         if(freeToMove(nextPosition, board)){
             if(positioning){
                 movePiece(nextPosition, board);
@@ -296,6 +307,7 @@ class Bishop extends ChessPiece{
     public void initiateMove(String nextPosition, ChessPiece [][] board ){
         int nextX = (int)nextPosition.charAt(0) - '0';
         int nextY = (int)nextPosition.charAt(1) - '0';
+        
         boolean possibleMove = (Math.abs(nextX)-((int)currentPosition.charAt(0) - '0') == Math.abs(nextY)-((int)currentPosition.charAt(1) - '0'));
 
 
@@ -333,6 +345,27 @@ class Queen extends ChessPiece{
         boolean positioning = (possiblePosition(Math.abs(xCurrent-nextX),0).equals(nextPosition))||(possiblePosition(0,Math.abs(yCurrent-nextY)).equals(nextPosition));
         if(freeToMove(nextPosition, board)){
             if(possibleMove || positioning){
+                movePiece(nextPosition, board);
+            }
+            
+
+        }
+    }
+    
+}
+class King extends ChessPiece{
+    //Constructor of pawn, sets color and the starting position
+    King(int color,String currentPosition){
+        this.color = color;
+        this.currentPosition = currentPosition;
+        this.pieceClass = "King";
+    }
+
+    //Checks if the square is free and if the position can be possible
+    @Override
+    public void initiateMove(String nextPosition, ChessPiece [][] board ){
+        if(freeToMove(nextPosition, board)){
+            if(possiblePosition(1*color,0).equals(nextPosition)){
                 movePiece(nextPosition, board);
             }
             
