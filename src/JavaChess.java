@@ -328,11 +328,7 @@ class Rook extends ChessPiece{
     //Initiates the move if the square is free and path is clear
     @Override
     public boolean  initiateMove(String nextPosition, ChessPiece [][] board ){
-        
-        if (freeToMove(nextPosition, board) && clearPath(nextPosition, board)) {
-            return true;
-        }
-        return false;
+        return (freeToMove(nextPosition, board) && clearPath(nextPosition, board));
     }
     
 }
@@ -368,10 +364,7 @@ class Horse extends ChessPiece{
                            (Math.abs(nextX - currentX) == 1 && Math.abs(nextY - currentY) == 2);
         /* 
         boolean positioning = PossiblePositionDown || PossiblePositionUp || PossiblePositionRight || PossiblePositionLeft;*/
-        if(freeToMove(nextPosition, board) && possibleMove){
-            return true;
-        }
-        return false;
+        return (freeToMove(nextPosition, board) && possibleMove);
     }
     
 }
@@ -392,11 +385,9 @@ class Bishop extends ChessPiece{
         int nextX = nextPosition.charAt(0) - '0';
         int nextY = nextPosition.charAt(1) - '0';
 
-        if (Math.abs(nextX - currentX) == Math.abs(nextY - currentY) && freeToMove(nextPosition, board) &&
-        clearDiagonalPath(nextPosition, board)) {
-            return true;
-     }
-     return false;
+        
+        return (Math.abs(nextX - currentX) == Math.abs(nextY - currentY) && freeToMove(nextPosition, board) &&
+        clearDiagonalPath(nextPosition, board));
     }
     
 }
@@ -417,12 +408,10 @@ class Queen extends ChessPiece{
         int nextX = nextPosition.charAt(0) - '0';
         int nextY = nextPosition.charAt(1) - '0';
 
-        if (freeToMove(nextPosition, board) &&
-            ((currentX == nextX || currentY == nextY) && clearPath(nextPosition, board)) ||
-            (Math.abs(nextX - currentX) == Math.abs(nextY - currentY) && clearDiagonalPath(nextPosition, board))) {
-                return true;
-        }
-        return false;
+        
+        return (freeToMove(nextPosition, board) &&
+        ((currentX == nextX || currentY == nextY) && clearPath(nextPosition, board)) ||
+        (Math.abs(nextX - currentX) == Math.abs(nextY - currentY) && clearDiagonalPath(nextPosition, board))) ;
         
     }
     
@@ -456,10 +445,8 @@ class King extends ChessPiece{
 
         boolean positionPossible = (differenceX <= 1 && differenceY <= 1);
 
-        if (freeToMove(nextPosition, board) && positionPossible) {
-            return (freeToMove(nextPosition, board) && positionPossible);
-        }
-        return false;
+        
+        return (freeToMove(nextPosition, board) && positionPossible);
     }
     
 }
