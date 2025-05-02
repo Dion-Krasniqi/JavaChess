@@ -75,6 +75,8 @@ public class JavaChess {
         int playerColor = -1;
         int pieceX;
         int pieceY;
+        int nextX;
+        int nextY;
         printTable(chessBoard);
         System.out.println("First Move:");
         String playerInput = input.nextLine();
@@ -85,38 +87,51 @@ public class JavaChess {
             if(playerInput.matches(pattern)){
                 pieceX = playerInput.charAt(0) - '0';
                 pieceY = playerInput.charAt(1) - '0';
-                if(chessBoard[pieceX][pieceY] == null){
+                nextX = playerInput.charAt(2) - '0';
+                nextY = playerInput.charAt(3) - '0';
+                //Checks if input out of range
+                if(((nextX<0 || nextX>7)|| (nextY<0 || nextY>7))||((pieceX<0 || pieceX>7)||(pieceY<0 || pieceY>7))){
+                    System.out.println("The square is out range! Please enter a valid move:");
+                }//Checks if sqaure is empty
+                else if (chessBoard[pieceX][pieceY] == null) {
                     System.out.println("The space is empty! Please enter another move:");
-                }else if (chessBoard[pieceX][pieceY].color != playerColor) {
+                }//Checks if piece doesn't match color
+                else if (chessBoard[pieceX][pieceY].color != playerColor) {
                     System.out.println("Player can't move piece of opposite color! Please enter the move again:");
-                }else{
+                }//If none the earlier cases occur, moves the piece
+                else{
                     notation += pieceX + "" + pieceY + chessBoard[pieceX][pieceY].getPieceClass() + playerInput.substring(2,4) + "\n";
+                    //Checks if the next square has the King
                     if((chessBoard[pieceX][pieceY].pieceClass).equals("King")){
                         String winningSentence = (playerColor==-1)?"White " + " has won!":"Black " + " has won!";
                         System.out.println(winningSentence);
                         break;
-                    }
+                    }//Does the actual moving, prints "Next move:" in the terminal, and changes player color
                     chessBoard[pieceX][pieceY].initiateMove(playerInput.substring(2,4),chessBoard);
                     System.out.println("Next move:");
-                    playerColor = playerColor*(-1);
+                    playerColor *=(-1);
                 }
-
-            }else{
+            
+            }//Tells player that the input is not of correct format and prompts to enter again
+            else{
                 System.out.println("The input is not of the correct pattern. Please enter the move again:");
                 
 
             }
+            //Prints the board on the terminal and awaits the next input
             printTable(chessBoard);
             playerInput = input.nextLine();
 
 
 
         }
+        //Checks if game has ended due to a surrender
         if(playerInput.equals("00")){
             String surrenderSentence = (playerColor==-1)?"White " + " has surrendered. Black":"Black " + " has surrendered! White";
             System.out.println(surrenderSentence+" has won!");
 
         }
+        //Prints the games complete notation and closes scanner
         System.out.println(notation);
         input.close();
 
